@@ -14,8 +14,9 @@
   margin: 0 0 10px;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(94, 234, 212, 0.5);
-  background: rgba(94, 234, 212, 0.12);
+  border: 1px solid rgba(235, 240, 86, 0.55);
+  background: rgba(235, 240, 86, 0.16);
+  color: #010b40;
   font-weight: 750;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -34,7 +35,7 @@
 
 .featured-desc {
   margin: 14px 0 0;
-  color: rgba(234, 240, 255, 0.86);
+  color: rgba(242, 242, 242, 0.88);
   max-width: 78ch;
 }
 
@@ -47,7 +48,7 @@
 
 .label {
   margin: 0 0 10px;
-  color: rgba(234, 240, 255, 0.9);
+  color: rgba(242, 242, 242, 0.9);
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 0.02em;
@@ -57,7 +58,7 @@
 .bullets {
   margin: 0;
   padding-left: 18px;
-  color: rgba(234, 240, 255, 0.84);
+  color: rgba(242, 242, 242, 0.85);
 }
 
 .bullets li + li {
@@ -70,10 +71,10 @@
 }
 
 .aside-box {
-  border: 1px solid rgba(234, 240, 255, 0.12);
+  border: 1px solid rgba(242, 242, 242, 0.14);
   border-radius: 12px;
   padding: 14px;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(242, 242, 242, 0.03);
 }
 
 .aside-text {
@@ -83,7 +84,7 @@
 .small-bullets {
   margin: 0;
   padding-left: 18px;
-  color: rgba(234, 240, 255, 0.82);
+  color: rgba(242, 242, 242, 0.83);
 }
 
 .small-bullets li + li {

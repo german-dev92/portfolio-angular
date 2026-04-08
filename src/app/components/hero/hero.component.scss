@@ -11,7 +11,7 @@
 
 .kicker {
   margin: 0 0 10px;
-  color: rgba(94, 234, 212, 0.9);
+  color: var(--highlight);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -34,7 +34,7 @@
 .summary {
   margin: 18px 0 0;
   max-width: 74ch;
-  color: rgba(234, 240, 255, 0.85);
+  color: rgba(242, 242, 242, 0.88);
 }
 
 .meta {
@@ -57,7 +57,7 @@
 .list {
   margin: 0;
   padding-left: 18px;
-  color: rgba(234, 240, 255, 0.85);
+  color: rgba(242, 242, 242, 0.86);
 }
 
 .list li + li {
