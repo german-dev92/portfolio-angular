@@ -1,0 +1,94 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(1, 11, 64, 0.72);
+  backdrop-filter: blur(10px);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  animation: overlayIn 140ms ease-out both;
+}
+
+.dialog {
+  width: min(1180px, 96vw);
+  max-height: 92vh;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(242, 242, 242, 0.16);
+  background: rgba(1, 11, 64, 0.9);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  animation: dialogIn 160ms ease-out both;
+}
+
+.dialog--wide {
+  width: min(1320px, 98vw);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 14px 12px;
+  border-bottom: 1px solid rgba(242, 242, 242, 0.1);
+  background: rgba(242, 242, 242, 0.03);
+}
+
+.title {
+  margin: 0;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+  color: rgba(242, 242, 242, 0.92);
+  font-size: 14px;
+}
+
+.close {
+  border-radius: 999px;
+  border: 1px solid rgba(242, 242, 242, 0.18);
+  padding: 8px 12px;
+  background: rgba(242, 242, 242, 0.03);
+  color: rgba(242, 242, 242, 0.9);
+  font-weight: 750;
+}
+
+.close:hover {
+  border-color: rgba(4, 217, 217, 0.55);
+  background: rgba(4, 217, 217, 0.12);
+  cursor: pointer;
+}
+
+.content {
+  padding: 14px;
+  overflow: auto;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  -webkit-overflow-scrolling: touch;
+}
+
+.no-select {
+  user-select: none;
+}
+
+@keyframes overlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

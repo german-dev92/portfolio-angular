@@ -14,14 +14,14 @@ export const FEATURED_PROJECT: Project = {
   title: 'Energy Consumption Analysis and Prediction System in Spain',
   subtitle: 'Featured project · Time series forecasting + clustering + EDA',
   description:
-    'End-to-end data project focused on understanding and predicting energy consumption patterns in Spain, combining robust data processing with analysis and modeling.',
+    'Master’s thesis project analyzing petroleum product consumption across Spain’s autonomous communities (2020–2024) to identify demand patterns and forecast trends through 2026, supporting energy-transition planning with explainable insights.',
   highlights: [
-    'Built data pipelines for data cleaning and processing',
-    'Implemented time series forecasting models',
-    'Applied clustering techniques (K-Means) for segmentation',
-    'Performed exploratory data analysis to uncover trends and anomalies',
+    'Built an automated pipeline to collect, clean, and normalize data (PySpark + pandas)',
+    'Performed deep EDA to surface correlations across fuel types and regional characteristics',
+    'Segmented regions with K-Means to identify groups with similar consumption behavior (notably a transition-ready cluster)',
+    'Compared forecasting approaches and selected SARIMAX for seasonality; assessed limitations without key exogenous variables',
   ],
-  technologies: ['Python', 'Pandas', 'PySpark', 'Time Series', 'K-Means', 'EDA'],
+  technologies: ['Python', 'Pandas', 'PySpark', 'EDA', 'K-Means', 'Time Series', 'SARIMAX'],
 };
 
 export const PROJECTS: Project[] = [

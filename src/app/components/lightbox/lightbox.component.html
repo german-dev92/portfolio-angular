@@ -1,0 +1,29 @@
+@if (open) {
+  <div
+    class="overlay"
+    [class.no-select]="noSelect"
+    (click)="closed.emit()"
+    (contextmenu)="onContextMenu($event)"
+    role="presentation"
+  >
+    <div
+      class="dialog"
+      [class.dialog--wide]="variant === 'wide'"
+      [class.no-select]="noSelect"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="title || 'Chart preview'"
+      (click)="$event.stopPropagation()"
+      (contextmenu)="onContextMenu($event)"
+    >
+      <div class="header">
+        <p class="title">{{ title }}</p>
+        <button class="close" type="button" (click)="closed.emit()" aria-label="Close dialog">Close</button>
+      </div>
+
+      <div class="content" (contextmenu)="onContextMenu($event)">
+        <ng-content />
+      </div>
+    </div>
+  </div>
+}

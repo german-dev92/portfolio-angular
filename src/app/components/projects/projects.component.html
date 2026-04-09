@@ -33,23 +33,1260 @@
               </div>
             </div>
           </div>
+
+          <div class="featured-actions" aria-label="Thesis">
+            <button type="button" class="btn btn--primary" (click)="openThesis(thesisPdf)">View Full Thesis</button>
+          </div>
+
+          <ng-template #thesisPdf let-size="size">
+            <div class="pdf-shell" (contextmenu)="preventContextMenu($event)">
+              <div class="pdf-frame-wrap">
+                @if (thesisLoading) {
+                  <div class="pdf-loading" aria-label="Loading PDF">
+                    <div class="spinner" aria-hidden="true"></div>
+                    <p class="muted">Loading thesis…</p>
+                  </div>
+                }
+
+                @if (thesisError) {
+                  <div class="pdf-error" aria-label="PDF error">
+                    <p class="pdf-error-title">Couldn’t load the PDF</p>
+                    <p class="muted pdf-error-text">{{ thesisError }}</p>
+                    <p class="muted pdf-error-text">
+                      Place the file at <strong>src/assets/docs/TFM-GERMAN_VELASQUEZ.pdf</strong> so it’s served at
+                      <strong>/assets/docs/TFM-GERMAN_VELASQUEZ.pdf</strong>.
+                    </p>
+                  </div>
+                }
+
+                @if (thesisSafeUrl) {
+                  <iframe
+                    class="pdf-frame"
+                    [src]="thesisSafeUrl"
+                    title="TFM thesis PDF"
+                    loading="eager"
+                    referrerpolicy="no-referrer"
+                    (load)="onThesisLoad()"
+                    (contextmenu)="preventContextMenu($event)"
+                  ></iframe>
+                }
+              </div>
+              <p class="muted pdf-note">
+                Read-only preview (best effort): toolbar hidden, right-click disabled in the modal UI, and no external links are provided.
+              </p>
+            </div>
+          </ng-template>
+        </div>
+
+        <div class="featured-wide">
+          <div class="kpi-grid" aria-label="Dataset overview">
+            <div class="kpi">
+              <p class="kpi-label">Records</p>
+              <p class="kpi-value">41,491</p>
+              <p class="kpi-note muted">Monthly rows (2020–2024)</p>
+            </div>
+            <div class="kpi">
+              <p class="kpi-label">Coverage</p>
+              <p class="kpi-value">19</p>
+              <p class="kpi-note muted">Autonomous communities</p>
+            </div>
+            <div class="kpi">
+              <p class="kpi-label">Granularity</p>
+              <p class="kpi-value">52</p>
+              <p class="kpi-note muted">Provinces</p>
+            </div>
+            <div class="kpi">
+              <p class="kpi-label">Products</p>
+              <p class="kpi-value">14</p>
+              <p class="kpi-note muted">Fuel categories</p>
+            </div>
+            <div class="kpi kpi--wide">
+              <p class="kpi-label">Data quality</p>
+              <p class="kpi-value">Verified</p>
+              <p class="kpi-note muted">No missing values or duplicates after preprocessing</p>
+            </div>
+          </div>
+
+          <div class="exec-block">
+            <p class="label">Data pipelines</p>
+            <div class="pipeline-grid" aria-label="Data collection and preprocessing">
+              <div class="exec-card">
+                <p class="conclusion-title">Data collection (datos.gob.es)</p>
+                <p class="muted conclusion-text">
+                  We sourced the dataset from Spain’s official open-data portal to ensure data integrity, transparency, and reproducibility for
+                  the 2020–2024 study window.
+                </p>
+                <ul class="exec-bullets">
+                  <li><strong>Reliability</strong>: government source with verifiable provenance.</li>
+                  <li><strong>Structured format</strong>: CSV files designed for analysis workflows.</li>
+                  <li>
+                    <strong>Regulatory backing</strong>: published under the Directorate-General resolution (May 29, 2007), supporting public
+                    access and transparency.
+                  </li>
+                  <li>
+                    <strong>Granularity</strong>: monthly date, CCAA + province, product type, and consumption in metric tons (Tm) to capture
+                    seasonality and regional differences.
+                  </li>
+                </ul>
+                <div class="pill-row">
+                  <span class="pill">Initial download: Oct 7, 2024 (through Jul 2024)</span>
+                  <span class="pill">Update: Dec 26, 2024 (through Oct 2024)</span>
+                </div>
+              </div>
+
+              <div class="exec-card">
+                <p class="conclusion-title">Preprocessing (PySpark + pandas)</p>
+                <p class="muted conclusion-text">
+                  We built a repeatable preprocessing pipeline to standardize five CSV extracts and produce analysis-ready tables for EDA,
+                  clustering, and forecasting.
+                </p>
+                <ul class="exec-bullets">
+                  <li>
+                    <strong>Load</strong>: PySpark CSV ingestion with delimiter (<strong>;</strong>), header parsing, and schema inference.
+                  </li>
+                  <li>
+                    <strong>Text normalization</strong>: removed accents/special characters (unicodedata + UDF), uppercased key dimensions
+                    (CCAA, province, product), and trimmed/cleaned spacing.
+                  </li>
+                  <li><strong>Type validation</strong>: enforced correct numeric type for <strong>Consumo Tm</strong> to avoid downstream issues.</li>
+                  <li><strong>Consistency checks</strong>: ensured no missing values or duplicates after processing.</li>
+                  <li>
+                    <strong>Anomalies & nulls</strong>: removed negative consumption values, dropped incomplete rows (<strong>na.drop()</strong>),
+                    standardized monthly date format (<strong>YYYY-MM</strong>), and reviewed extremes via descriptive stats.
+                  </li>
+                </ul>
+                <div class="pill-row">
+                  <span class="pill">Reproducible</span>
+                  <span class="pill">Scalable</span>
+                  <span class="pill">Audit-friendly</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="exec-block">
+            <p class="label">Pipeline automation & integration</p>
+            <div class="pipeline-grid" aria-label="Automation and data integration">
+              <div class="exec-card">
+                <p class="conclusion-title">Automated, modular pipeline</p>
+                <p class="muted conclusion-text">
+                  The preprocessing workflow was automated with modular PySpark functions for cleaning, normalization, and validation. This
+                  reduces manual effort, increases consistency across yearly extracts, and supports repeatable execution on future datasets.
+                </p>
+                <ul class="exec-bullets">
+                  <li><strong>Post-validation</strong>: outputs are homogeneous and standardized after cleanup.</li>
+                  <li><strong>Operational visibility</strong>: integrated logs enable monitoring and faster error detection.</li>
+                  <li><strong>Future-ready</strong>: designed to ingest updated records and adapt to evolving schemas with minimal rework.</li>
+                </ul>
+                <div class="pill-row">
+                  <span class="pill">Modular functions</span>
+                  <span class="pill">Logging</span>
+                  <span class="pill">Monitoring</span>
+                </div>
+              </div>
+
+              <div class="exec-card">
+                <p class="conclusion-title">Data integration (2020–2024)</p>
+                <p class="muted conclusion-text">
+                  Five yearly CSV extracts were consolidated into a single analysis-ready dataset (<strong>consumo2020-2024.csv</strong>) to
+                  enable continuous time-series analysis and cross-year comparisons.
+                </p>
+                <ol class="pipeline-steps">
+                  <li>Load yearly CSVs into Spark DataFrames (<strong>header=true</strong>, <strong>inferSchema=true</strong>).</li>
+                  <li>Union all years into one DataFrame (<strong>union()</strong>) and verify a sample output.</li>
+                  <li>Persist as a single CSV file using <strong>coalesce(1)</strong> and <strong>mode="overwrite"</strong>.</li>
+                </ol>
+                <div class="pill-row">
+                  <span class="pill">Final dataset: 1.96 MB</span>
+                  <span class="pill">Ready for EDA, K-Means, SARIMAX</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="exec-block">
+            <p class="label">Distribution snapshot</p>
+            <div class="exec-grid">
+              <div class="exec-card">
+                <p class="muted exec-text">
+                  Consumption (Tm) is strongly right-skewed: many low or zero values with occasional large peaks. This reflects
+                  uneven product adoption across regions and months.
+                </p>
+                <div class="pill-row">
+                  <span class="pill">Mean: 5,592.29 Tm</span>
+                  <span class="pill">Median: 168 Tm</span>
+                  <span class="pill">Std: 17,674.76 Tm</span>
+                  <span class="pill">Max: 332,588 Tm (Cádiz, 2022)</span>
+                </div>
+              </div>
+
+              <div class="exec-card exec-card--viz">
+                <button type="button" class="viz-btn" (click)="openLightbox('Consumption distribution (Tm)', histChart)">
+                  <ng-container *ngTemplateOutlet="histChart; context: { size: 'thumb' }"></ng-container>
+                </button>
+
+                <ng-template #histChart let-size="size">
+                  <svg
+                    [attr.class]="size === 'modal' ? 'lightbox-figure' : 'exec-viz'"
+                    viewBox="0 0 520 190"
+                    [attr.preserveAspectRatio]="size === 'modal' ? 'xMidYMid meet' : 'none'"
+                    aria-hidden="true"
+                  >
+                  <defs>
+                    <linearGradient [attr.id]="'histBg_' + size" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="rgba(4, 119, 191, 0.18)" />
+                      <stop offset="1" stop-color="rgba(4, 217, 217, 0.10)" />
+                    </linearGradient>
+                    <linearGradient [attr.id]="'histBar_' + size" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#04c4d9" />
+                      <stop offset="1" stop-color="#0477bf" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="0" y="0" width="520" height="190" rx="14" [attr.fill]="'url(#histBg_' + size + ')'" />
+                  <g opacity="0.22" stroke="rgba(242, 242, 242, 0.7)" stroke-width="1">
+                    <path d="M34 26H506" />
+                    <path d="M34 66H506" />
+                    <path d="M34 106H506" />
+                    <path d="M34 146H506" />
+                    <path d="M34 26V162" />
+                  </g>
+                  <g opacity="0.95">
+                    <rect x="52" y="54" width="22" height="108" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" />
+                    <rect x="80" y="66" width="22" height="96" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" opacity="0.92" />
+                    <rect x="108" y="86" width="22" height="76" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" opacity="0.84" />
+                    <rect x="136" y="104" width="22" height="58" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" opacity="0.78" />
+                    <rect x="164" y="118" width="22" height="44" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" opacity="0.72" />
+                    <rect x="192" y="126" width="22" height="36" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" opacity="0.68" />
+                    <rect x="220" y="134" width="22" height="28" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" opacity="0.62" />
+                    <rect x="248" y="140" width="22" height="22" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" opacity="0.58" />
+                    <rect x="276" y="146" width="22" height="16" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" opacity="0.54" />
+                    <rect x="304" y="150" width="22" height="12" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" opacity="0.5" />
+                    <rect x="332" y="152" width="22" height="10" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" opacity="0.46" />
+                    <rect x="360" y="154" width="22" height="8" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" opacity="0.42" />
+                    <rect x="388" y="156" width="22" height="6" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" opacity="0.38" />
+                    <rect x="416" y="158" width="22" height="4" rx="6" [attr.fill]="'url(#histBar_' + size + ')'" opacity="0.34" />
+                  </g>
+                  <path
+                    d="M52 54 C 120 62, 170 98, 220 128 C 280 154, 360 160, 470 162"
+                    fill="none"
+                    stroke="#ebf056"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    opacity="0.95"
+                  />
+                  <text x="34" y="18" fill="rgba(242, 242, 242, 0.85)" font-size="12" font-weight="700">
+                    Consumption (Tm) distribution
+                  </text>
+                  <text x="380" y="18" fill="rgba(242, 242, 242, 0.72)" font-size="12">Skewed with rare peaks</text>
+                  </svg>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+
+          <div class="exec-block">
+            <p class="label">Key findings (2020–2024)</p>
+            <ul class="exec-bullets">
+              <li><strong>Diesel A</strong> dominated road fuel demand, exceeding <strong>22M Tm</strong> in 2022.</li>
+              <li><strong>Diesel B</strong> stayed stable at <strong>~4–5M Tm/year</strong> (agriculture and fisheries).</li>
+              <li><strong>Diesel C</strong> showed strong seasonality (winter peaks, summer troughs), making it a great SARIMAX case study.</li>
+              <li><strong>Jet fuel</strong> collapsed in 2020, recovered to <strong>~6.6M Tm</strong> in 2023, then declined in 2024.</li>
+              <li><strong>Unleaded 95</strong> grew until 2024, where a drop suggests changing mobility and efficiency trends.</li>
+              <li><strong>Biodiesel</strong> increased from <strong>6,017 → 34,632 Tm</strong> (still a small share overall).</li>
+            </ul>
+          </div>
+
+          <div class="exec-block">
+            <div class="slides-head">
+              <p class="label">Executive slide deck</p>
+            </div>
+
+            <div class="slides" role="list" aria-label="Executive slides">
+              <article class="slide" role="listitem" aria-label="Slide: Product mix (2020 to 2024)">
+                <div class="slide-top">
+                  <p class="slide-kicker">Portfolio view</p>
+                  <h4 class="slide-title">Product mix (2020–2024)</h4>
+                  <p class="muted slide-sub">
+                    Total consumption is concentrated in a few products; this distribution guided later K-Means segmentation.
+                  </p>
+                </div>
+
+                <div class="slide-grid">
+                  <div class="slide-viz">
+                    <button type="button" class="viz-btn" (click)="openLightbox('Product mix (2020–2024)', donutChart)">
+                      <ng-container *ngTemplateOutlet="donutChart; context: { size: 'thumb' }"></ng-container>
+                    </button>
+
+                    <ng-template #donutChart let-size="size">
+                      <svg
+                        [attr.class]="size === 'modal' ? 'lightbox-figure' : 'slide-svg'"
+                        viewBox="0 0 260 260"
+                        [attr.preserveAspectRatio]="size === 'modal' ? 'xMidYMid meet' : 'xMidYMid meet'"
+                        aria-hidden="true"
+                      >
+                      <defs>
+                        <linearGradient [attr.id]="'donutA_' + size" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0" stop-color="#04d9d9" />
+                          <stop offset="1" stop-color="#0477bf" />
+                        </linearGradient>
+                      </defs>
+
+                      <circle cx="130" cy="130" r="94" fill="none" stroke="rgba(242, 242, 242, 0.08)" stroke-width="22" />
+
+                      <g transform="rotate(-90 130 130)">
+                        <circle
+                          cx="130"
+                          cy="130"
+                          r="94"
+                          fill="none"
+                          [attr.stroke]="'url(#donutA_' + size + ')'"
+                          stroke-width="22"
+                          stroke-linecap="round"
+                          stroke-dasharray="258 590"
+                        />
+                        <circle
+                          cx="130"
+                          cy="130"
+                          r="94"
+                          fill="none"
+                          stroke="#04c4d9"
+                          stroke-width="22"
+                          stroke-linecap="round"
+                          stroke-dasharray="63 590"
+                          stroke-dashoffset="-268"
+                          opacity="0.95"
+                        />
+                        <circle
+                          cx="130"
+                          cy="130"
+                          r="94"
+                          fill="none"
+                          stroke="#ebf056"
+                          stroke-width="22"
+                          stroke-linecap="round"
+                          stroke-dasharray="62 590"
+                          stroke-dashoffset="-337"
+                          opacity="0.9"
+                        />
+                        <circle
+                          cx="130"
+                          cy="130"
+                          r="94"
+                          fill="none"
+                          stroke="#0477bf"
+                          stroke-width="22"
+                          stroke-linecap="round"
+                          stroke-dasharray="61 590"
+                          stroke-dashoffset="-406"
+                          opacity="0.82"
+                        />
+                        <circle
+                          cx="130"
+                          cy="130"
+                          r="94"
+                          fill="none"
+                          stroke="rgba(242, 242, 242, 0.18)"
+                          stroke-width="22"
+                          stroke-linecap="round"
+                          stroke-dasharray="146 590"
+                          stroke-dashoffset="-475"
+                        />
+                      </g>
+
+                      <text x="130" y="125" text-anchor="middle" fill="rgba(242, 242, 242, 0.9)" font-size="24" font-weight="800">
+                        43.64%
+                      </text>
+                      <text x="130" y="148" text-anchor="middle" fill="rgba(242, 242, 242, 0.72)" font-size="12" font-weight="700">
+                        Diesel A share
+                      </text>
+                    </svg>
+                    </ng-template>
+                  </div>
+
+                  <div class="slide-notes">
+                    <div class="pill-row">
+                      <span class="pill"><strong>Diesel A</strong> 43.64%</span>
+                      <span class="pill">Unleaded 95: 10.61%</span>
+                      <span class="pill">Other fuel oils: 10.56%</span>
+                      <span class="pill">Jet fuel: 10.29%</span>
+                      <span class="pill">Diesel B: 8.62%</span>
+                      <span class="pill">Other: long tail</span>
+                    </div>
+                    <p class="muted slide-foot">
+                      Executive takeaway: portfolio concentration means a small set of products explains most variance across regions.
+                    </p>
+                  </div>
+                </div>
+              </article>
+
+              <article class="slide" role="listitem" aria-label="Slide: Monthly consumption patterns">
+                <div class="slide-top">
+                  <p class="slide-kicker">Seasonality</p>
+                  <h4 class="slide-title">Monthly consumption (YoY)</h4>
+                  <p class="muted slide-sub">
+                    Line comparison by year highlights trend shifts and outlier months with unusually high or low demand.
+                  </p>
+                </div>
+
+                <div class="slide-grid">
+                  <div class="slide-viz">
+                    <button type="button" class="viz-btn" (click)="openLightbox('Monthly consumption (YoY)', monthlyChart)">
+                      <ng-container *ngTemplateOutlet="monthlyChart; context: { size: 'thumb' }"></ng-container>
+                    </button>
+
+                    <ng-template #monthlyChart let-size="size">
+                      <svg
+                        [attr.class]="size === 'modal' ? 'lightbox-figure' : 'slide-wide'"
+                        viewBox="0 0 520 240"
+                        [attr.preserveAspectRatio]="size === 'modal' ? 'xMidYMid meet' : 'none'"
+                        aria-hidden="true"
+                      >
+                      <defs>
+                        <linearGradient [attr.id]="'line24_' + size" x1="0" y1="0" x2="1" y2="0">
+                          <stop offset="0" stop-color="#ebf056" />
+                          <stop offset="1" stop-color="#04d9d9" />
+                        </linearGradient>
+                      </defs>
+
+                      <rect x="0" y="0" width="520" height="240" rx="14" fill="rgba(242, 242, 242, 0.03)" />
+
+                      <g opacity="0.18" stroke="rgba(242, 242, 242, 0.75)" stroke-width="1">
+                        <path d="M64 44H504" />
+                        <path d="M64 84H504" />
+                        <path d="M64 124H504" />
+                        <path d="M64 164H504" />
+                        <path d="M64 204H504" />
+                        <path d="M64 44V204" />
+                        <path d="M104 44V204" />
+                        <path d="M144 44V204" />
+                        <path d="M184 44V204" />
+                        <path d="M224 44V204" />
+                        <path d="M264 44V204" />
+                        <path d="M304 44V204" />
+                        <path d="M344 44V204" />
+                        <path d="M384 44V204" />
+                        <path d="M424 44V204" />
+                        <path d="M464 44V204" />
+                        <path d="M504 44V204" />
+                      </g>
+
+                      <g opacity="0.75" stroke="rgba(242, 242, 242, 0.9)" stroke-width="1.2">
+                        <path d="M64 204H504" />
+                        <path d="M64 44V204" />
+                      </g>
+
+                      <g fill="rgba(242, 242, 242, 0.72)" font-size="11" font-weight="700">
+                        <text x="22" y="48">4.6M</text>
+                        <text x="22" y="88">4.4M</text>
+                        <text x="22" y="128">4.2M</text>
+                        <text x="22" y="168">4.0M</text>
+                        <text x="22" y="208">3.8M</text>
+                      </g>
+
+                      <g fill="rgba(242, 242, 242, 0.72)" font-size="11" font-weight="700">
+                        <text x="62" y="226">Jan</text>
+                        <text x="142" y="226">Mar</text>
+                        <text x="222" y="226">May</text>
+                        <text x="302" y="226">Jul</text>
+                        <text x="382" y="226">Sep</text>
+                        <text x="462" y="226">Nov</text>
+                      </g>
+
+                      <text x="18" y="24" fill="rgba(242, 242, 242, 0.85)" font-size="12" font-weight="800">
+                        Monthly consumption (YoY)
+                      </text>
+
+                      <g transform="translate(316 14)">
+                        <rect x="0" y="0" width="188" height="24" rx="10" fill="rgba(1, 11, 64, 0.32)" stroke="rgba(242, 242, 242, 0.12)" />
+                        <circle cx="16" cy="12" r="4" fill="rgba(242, 242, 242, 0.35)" />
+                        <text x="26" y="16" fill="rgba(242, 242, 242, 0.75)" font-size="11" font-weight="700">2022</text>
+                        <circle cx="72" cy="12" r="4" fill="rgba(4, 196, 217, 0.75)" />
+                        <text x="82" y="16" fill="rgba(242, 242, 242, 0.82)" font-size="11" font-weight="700">2023</text>
+                        <circle cx="128" cy="12" r="4" fill="#ebf056" />
+                        <text x="138" y="16" fill="rgba(242, 242, 242, 0.92)" font-size="11" font-weight="800">2024</text>
+                      </g>
+
+                      <path
+                        d="M64 168 L104 160 L144 172 L184 146 L224 138 L264 120 L304 108 L344 116 L384 102 L424 110 L464 98 L504 104"
+                        fill="none"
+                        stroke="rgba(242, 242, 242, 0.32)"
+                        stroke-width="2.6"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M64 160 L104 164 L144 148 L184 150 L224 144 L264 132 L304 124 L344 126 L384 118 L424 120 L464 116 L504 114"
+                        fill="none"
+                        stroke="rgba(4, 196, 217, 0.78)"
+                        stroke-width="2.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M64 148 L104 154 L144 150 L184 116 L224 110 L264 98 L304 92 L344 96 L384 90 L424 86 L464 92 L504 88"
+                        fill="none"
+                        [attr.stroke]="'url(#line24_' + size + ')'"
+                        stroke-width="3.6"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+
+                      <g opacity="0.95">
+                        <circle cx="64" cy="148" r="5" fill="#ebf056" />
+                        <circle cx="184" cy="116" r="5" fill="#ebf056" />
+                        <circle cx="224" cy="110" r="5" fill="#ebf056" />
+                        <circle cx="304" cy="92" r="5" fill="#ebf056" />
+                        <circle cx="344" cy="96" r="5" fill="#ebf056" />
+                      </g>
+
+                      <g fill="rgba(242, 242, 242, 0.9)" font-size="11" font-weight="800">
+                        <text x="54" y="140">Jan</text>
+                        <text x="170" y="108">Apr</text>
+                        <text x="210" y="102">May</text>
+                        <text x="290" y="84">Jul</text>
+                        <text x="330" y="88">Aug</text>
+                      </g>
+                    </svg>
+                    </ng-template>
+                  </div>
+
+                  <div class="slide-notes">
+                    <p class="muted slide-foot">
+                      Executive takeaway: 2024 shows several record peaks (Jan, Apr, May, Jul, Aug), consistent with seasonal
+                      pressure points (winter heating and summer mobility).
+                    </p>
+                    <div class="pill-row">
+                      <span class="pill">Outlier months: Jan · Apr · May · Jul · Aug</span>
+                      <span class="pill">Use case: anomaly detection + planning</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="slide" role="listitem" aria-label="Slide: Correlation by autonomous community">
+                <div class="slide-top">
+                  <p class="slide-kicker">Similarity</p>
+                  <h4 class="slide-title">Correlation map (CCAA)</h4>
+                  <p class="muted slide-sub">
+                    Correlations reveal communities with similar demand behavior, supporting cluster formation for targeted policy actions.
+                  </p>
+                </div>
+
+                <div class="slide-grid">
+                  <div class="slide-viz">
+                    <button type="button" class="viz-btn" (click)="openLightbox('Correlation map (CCAA)', corrChart)">
+                      <ng-container *ngTemplateOutlet="corrChart; context: { size: 'thumb' }"></ng-container>
+                    </button>
+
+                    <ng-template #corrChart let-size="size">
+                      <div class="heatmap-mini" [class.heatmap-mini--modal]="size === 'modal'" aria-hidden="true">
+                        <div class="heatmap-mini-grid">
+                          <span class="hm hm-95"></span><span class="hm hm-86"></span><span class="hm hm-92"></span><span class="hm hm-80"></span><span class="hm hm-neg"></span>
+                          <span class="hm hm-86"></span><span class="hm hm-95"></span><span class="hm hm-90"></span><span class="hm hm-78"></span><span class="hm hm-neg"></span>
+                          <span class="hm hm-92"></span><span class="hm hm-90"></span><span class="hm hm-95"></span><span class="hm hm-82"></span><span class="hm hm-neg"></span>
+                          <span class="hm hm-80"></span><span class="hm hm-78"></span><span class="hm hm-82"></span><span class="hm hm-95"></span><span class="hm hm-neg"></span>
+                          <span class="hm hm-neg"></span><span class="hm hm-neg"></span><span class="hm hm-neg"></span><span class="hm hm-neg"></span><span class="hm hm-95"></span>
+                        </div>
+                        <div class="heatmap-mini-legend">
+                          <span class="hm-legend">-1</span>
+                          <span class="hm-track"><span class="hm-gradient"></span></span>
+                          <span class="hm-legend">+1</span>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </div>
+
+                  <div class="slide-notes">
+                    <div class="pill-row">
+                      <span class="pill">Andalucía ↔ Canarias: 0.966</span>
+                      <span class="pill">Castilla y León ↔ Cantabria: 0.983</span>
+                      <span class="pill">Ceuta shows divergent behavior</span>
+                    </div>
+                    <p class="muted slide-foot">
+                      Executive takeaway: high-correlation pairs suggest shared demand drivers; outliers require bespoke analysis.
+                    </p>
+                  </div>
+                </div>
+              </article>
+
+              <article class="slide" role="listitem" aria-label="Slide: Choosing number of clusters">
+                <div class="slide-top">
+                  <p class="slide-kicker">Model choice</p>
+                  <h4 class="slide-title">K selection: elbow + silhouette</h4>
+                  <p class="muted slide-sub">
+                    Elbow analysis suggested 10 clusters, but we selected 8 to reduce complexity while preserving separation quality.
+                  </p>
+                </div>
+
+                <div class="slide-grid">
+                  <div class="slide-viz">
+                    <button type="button" class="viz-btn" (click)="openLightbox('K selection: elbow curve (WCSS)', elbowChart)">
+                      <ng-container *ngTemplateOutlet="elbowChart; context: { size: 'thumb' }"></ng-container>
+                    </button>
+
+                    <ng-template #elbowChart let-size="size">
+                      <svg
+                        [attr.class]="size === 'modal' ? 'lightbox-figure' : 'slide-wide'"
+                        viewBox="0 0 520 240"
+                        [attr.preserveAspectRatio]="size === 'modal' ? 'xMidYMid meet' : 'none'"
+                        aria-hidden="true"
+                      >
+                      <rect x="0" y="0" width="520" height="240" rx="14" fill="rgba(242, 242, 242, 0.03)" />
+
+                      <g opacity="0.18" stroke="rgba(242, 242, 242, 0.75)" stroke-width="1">
+                        <path d="M64 44H504" />
+                        <path d="M64 84H504" />
+                        <path d="M64 124H504" />
+                        <path d="M64 164H504" />
+                        <path d="M64 204H504" />
+                        <path d="M64 44V204" />
+                        <path d="M124 44V204" />
+                        <path d="M184 44V204" />
+                        <path d="M244 44V204" />
+                        <path d="M304 44V204" />
+                        <path d="M364 44V204" />
+                        <path d="M424 44V204" />
+                        <path d="M484 44V204" />
+                      </g>
+
+                      <g opacity="0.75" stroke="rgba(242, 242, 242, 0.9)" stroke-width="1.2">
+                        <path d="M64 204H504" />
+                        <path d="M64 44V204" />
+                      </g>
+
+                      <g fill="rgba(242, 242, 242, 0.72)" font-size="11" font-weight="700">
+                        <text x="22" y="48">190</text>
+                        <text x="28" y="88">140</text>
+                        <text x="28" y="128">90</text>
+                        <text x="28" y="168">40</text>
+                        <text x="34" y="208">0</text>
+                      </g>
+
+                      <g fill="rgba(242, 242, 242, 0.72)" font-size="11" font-weight="700">
+                        <text x="118" y="226">2</text>
+                        <text x="178" y="226">4</text>
+                        <text x="238" y="226">6</text>
+                        <text x="298" y="226">8</text>
+                        <text x="358" y="226">10</text>
+                      </g>
+
+                      <text x="18" y="24" fill="rgba(242, 242, 242, 0.85)" font-size="12" font-weight="800">
+                        Elbow curve (WCSS)
+                      </text>
+                      <text x="18" y="38" fill="rgba(242, 242, 242, 0.72)" font-size="11" font-weight="700">
+                        Lower is better; flattening suggests diminishing returns
+                      </text>
+
+                      <path
+                        d="M64 52 L124 150 L184 174 L244 186 L304 192 L364 195 L424 196 L484 197 L504 197"
+                        fill="none"
+                        stroke="#04d9d9"
+                        stroke-width="3.2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+
+                      <path d="M424 44 L424 204" stroke="rgba(235, 240, 86, 0.65)" stroke-width="2.5" stroke-dasharray="6 7" />
+
+                      <g opacity="0.95">
+                        <circle cx="64" cy="52" r="4.5" fill="#04d9d9" />
+                        <circle cx="124" cy="150" r="4.5" fill="#04d9d9" />
+                        <circle cx="184" cy="174" r="4.5" fill="#04d9d9" />
+                        <circle cx="244" cy="186" r="4.5" fill="#04d9d9" />
+                        <circle cx="304" cy="192" r="4.5" fill="#04d9d9" />
+                        <circle cx="364" cy="195" r="4.5" fill="#04d9d9" />
+                        <circle cx="424" cy="196" r="7" fill="#ebf056" />
+                        <circle cx="484" cy="197" r="4.5" fill="#04d9d9" opacity="0.8" />
+                        <circle cx="504" cy="197" r="4.5" fill="#04d9d9" opacity="0.65" />
+                      </g>
+
+                      <g>
+                        <rect x="338" y="52" width="166" height="28" rx="10" fill="rgba(1, 11, 64, 0.32)" stroke="rgba(242, 242, 242, 0.12)" />
+                        <text x="350" y="71" fill="rgba(242, 242, 242, 0.9)" font-size="12" font-weight="800">Chosen: k = 8</text>
+                        <circle cx="490" cy="66" r="4" fill="#ebf056" />
+                      </g>
+
+                      <text x="18" y="226" fill="rgba(242, 242, 242, 0.72)" font-size="11" font-weight="700">k (clusters)</text>
+                      <text x="18" y="58" fill="rgba(242, 242, 242, 0.72)" font-size="11" font-weight="700" transform="rotate(-90 18 58)">
+                        WCSS
+                      </text>
+                    </svg>
+                    </ng-template>
+                  </div>
+
+                  <div class="slide-notes">
+                    <p class="muted slide-foot">
+                      Silhouette score at <strong>0.68</strong> indicates good separation: within-cluster similarity is high and clusters are
+                      meaningfully different.
+                    </p>
+                    <div class="score" role="img" aria-label="Silhouette score 0.68">
+                      <div class="score-track">
+                        <div class="score-fill" style="width: 68%"></div>
+                      </div>
+                      <div class="score-row">
+                        <span class="muted">0</span>
+                        <span class="score-value">0.68</span>
+                        <span class="muted">1</span>
+                      </div>
+                    </div>
+                    <div class="pill-row">
+                      <span class="pill">Elbow suggested 10</span>
+                      <span class="pill">Selected 8 for focus</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="slide" role="listitem" aria-label="Slide: Cluster distribution overview">
+                <div class="slide-top">
+                  <p class="slide-kicker">Segmentation</p>
+                  <h4 class="slide-title">Cluster distribution (k = 8)</h4>
+                  <p class="muted slide-sub">Communities grouped by similar petroleum consumption patterns.</p>
+                </div>
+
+                <div class="cluster-viz">
+                  <button type="button" class="viz-btn" (click)="openLightbox('K-Means cluster dispersion (CCAA) with centroids', clusterScatter)">
+                    <ng-container *ngTemplateOutlet="clusterScatter; context: { size: 'thumb' }"></ng-container>
+                  </button>
+
+                  <ng-template #clusterScatter let-size="size">
+                    <svg
+                      [attr.class]="size === 'modal' ? 'lightbox-figure lightbox-figure--wide' : 'cluster-plot'"
+                      viewBox="0 0 900 380"
+                      [attr.preserveAspectRatio]="size === 'modal' ? 'xMidYMid meet' : 'none'"
+                      aria-hidden="true"
+                    >
+                      <rect x="0" y="0" width="900" height="380" rx="16" fill="rgba(242, 242, 242, 0.03)" />
+
+                      <g opacity="0.18" stroke="rgba(242, 242, 242, 0.75)" stroke-width="1">
+                        <path d="M70 54H860" />
+                        <path d="M70 114H860" />
+                        <path d="M70 174H860" />
+                        <path d="M70 234H860" />
+                        <path d="M70 294H860" />
+                        <path d="M70 54V320" />
+                        <path d="M180 54V320" />
+                        <path d="M290 54V320" />
+                        <path d="M400 54V320" />
+                        <path d="M510 54V320" />
+                        <path d="M620 54V320" />
+                        <path d="M730 54V320" />
+                        <path d="M860 54V320" />
+                      </g>
+
+                      <g opacity="0.75" stroke="rgba(242, 242, 242, 0.9)" stroke-width="1.2">
+                        <path d="M70 320H860" />
+                        <path d="M70 54V320" />
+                      </g>
+
+                      <g fill="rgba(242, 242, 242, 0.72)" font-size="12" font-weight="700">
+                        <text x="24" y="64">3.0</text>
+                        <text x="24" y="124">2.0</text>
+                        <text x="24" y="184">1.0</text>
+                        <text x="24" y="244">0.0</text>
+                        <text x="18" y="304">-1.0</text>
+                      </g>
+
+                      <g fill="rgba(242, 242, 242, 0.72)" font-size="12" font-weight="700">
+                        <text x="62" y="354">-1</text>
+                        <text x="174" y="354">0</text>
+                        <text x="284" y="354">1</text>
+                        <text x="394" y="354">2</text>
+                        <text x="504" y="354">3</text>
+                      </g>
+
+                      <text x="20" y="28" fill="rgba(242, 242, 242, 0.9)" font-size="14" font-weight="800">
+                        Cluster dispersion by CCAA (K-Means)
+                      </text>
+
+                      <g opacity="0.95">
+                        <circle cx="120" cy="286" r="5" fill="#3b82f6" />
+                        <circle cx="136" cy="274" r="5" fill="#3b82f6" />
+                        <circle cx="152" cy="266" r="5" fill="#3b82f6" />
+                        <circle cx="168" cy="256" r="5" fill="#3b82f6" />
+
+                        <circle cx="182" cy="252" r="5" fill="#f59e0b" />
+                        <circle cx="196" cy="238" r="5" fill="#f59e0b" />
+                        <circle cx="214" cy="226" r="5" fill="#f59e0b" />
+
+                        <circle cx="230" cy="236" r="5" fill="#22c55e" />
+                        <circle cx="244" cy="226" r="5" fill="#22c55e" />
+                        <circle cx="260" cy="214" r="5" fill="#22c55e" />
+                        <circle cx="274" cy="206" r="5" fill="#22c55e" />
+
+                        <circle cx="340" cy="168" r="5" fill="#a855f7" />
+                        <circle cx="356" cy="154" r="5" fill="#a855f7" />
+                        <circle cx="372" cy="144" r="5" fill="#a855f7" />
+
+                        <circle cx="420" cy="128" r="5" fill="#b45309" />
+                        <circle cx="438" cy="118" r="5" fill="#b45309" />
+                        <circle cx="452" cy="106" r="5" fill="#b45309" />
+
+                        <circle cx="520" cy="94" r="5" fill="#94a3b8" />
+                        <circle cx="540" cy="84" r="5" fill="#94a3b8" />
+
+                        <circle cx="640" cy="96" r="5" fill="#ec4899" />
+                        <circle cx="664" cy="86" r="5" fill="#ec4899" />
+
+                        <circle cx="740" cy="70" r="5" fill="#ef4444" />
+                        <circle cx="764" cy="62" r="5" fill="#ef4444" />
+                        <circle cx="790" cy="54" r="5" fill="#ef4444" />
+                      </g>
+
+                      <g opacity="0.95" stroke="#ebf056" stroke-width="4" stroke-linecap="round">
+                        <path d="M144 274l10 10m0-10l-10 10" />
+                        <path d="M202 238l10 10m0-10l-10 10" />
+                        <path d="M254 218l10 10m0-10l-10 10" />
+                        <path d="M362 152l10 10m0-10l-10 10" />
+                        <path d="M442 112l10 10m0-10l-10 10" />
+                        <path d="M536 84l10 10m0-10l-10 10" />
+                        <path d="M662 86l10 10m0-10l-10 10" />
+                        <path d="M780 56l10 10m0-10l-10 10" />
+                      </g>
+
+                      <g>
+                        <rect x="640" y="250" width="220" height="92" rx="14" fill="rgba(1, 11, 64, 0.32)" stroke="rgba(242, 242, 242, 0.12)" />
+                        <g font-size="12" font-weight="800" fill="rgba(242, 242, 242, 0.9)">
+                          <circle cx="658" cy="272" r="5" fill="#3b82f6" />
+                          <text x="670" y="276">C0</text>
+                          <circle cx="706" cy="272" r="5" fill="#f59e0b" />
+                          <text x="718" y="276">C1</text>
+                          <circle cx="754" cy="272" r="5" fill="#22c55e" />
+                          <text x="766" y="276">C2</text>
+                          <circle cx="802" cy="272" r="5" fill="#ef4444" />
+                          <text x="814" y="276">C3</text>
+
+                          <circle cx="658" cy="302" r="5" fill="#a855f7" />
+                          <text x="670" y="306">C4</text>
+                          <circle cx="706" cy="302" r="5" fill="#b45309" />
+                          <text x="718" y="306">C5</text>
+                          <circle cx="754" cy="302" r="5" fill="#ec4899" />
+                          <text x="766" y="306">C6</text>
+                          <circle cx="802" cy="302" r="5" fill="#94a3b8" />
+                          <text x="814" y="306">C7</text>
+                        </g>
+                        <path d="M658 330l10 10m0-10l-10 10" stroke="#ebf056" stroke-width="4" stroke-linecap="round" />
+                        <text x="676" y="338" fill="rgba(242, 242, 242, 0.82)" font-size="12" font-weight="800">Centroids</text>
+                      </g>
+
+                      <text x="360" y="372" fill="rgba(242, 242, 242, 0.72)" font-size="12" font-weight="700">
+                        Consumption (scaled)
+                      </text>
+                      <text
+                        x="22"
+                        y="214"
+                        fill="rgba(242, 242, 242, 0.72)"
+                        font-size="12"
+                        font-weight="700"
+                        transform="rotate(-90 22 214)"
+                      >
+                        Share (scaled)
+                      </text>
+                    </svg>
+                  </ng-template>
+                </div>
+
+                <div class="cluster-grid" aria-label="Clusters">
+                  <div class="cluster cluster--c0">
+                    <p class="cluster-title"><span class="cluster-dot cluster-dot--c0" aria-hidden="true"></span>Cluster 0</p>
+                    <p class="muted cluster-sub">Transition-ready candidates</p>
+                    <div class="pill-row">
+                      <span class="pill">Galicia</span>
+                      <span class="pill">País Vasco</span>
+                      <span class="pill">Castilla-La Mancha</span>
+                      <span class="pill">Castilla y León</span>
+                    </div>
+                  </div>
+
+                  <div class="cluster cluster--c1">
+                    <p class="cluster-title"><span class="cluster-dot cluster-dot--c1" aria-hidden="true"></span>Cluster 1</p>
+                    <div class="pill-row">
+                      <span class="pill">Cataluña</span>
+                    </div>
+                  </div>
+
+                  <div class="cluster cluster--c2">
+                    <p class="cluster-title"><span class="cluster-dot cluster-dot--c2" aria-hidden="true"></span>Cluster 2</p>
+                    <p class="muted cluster-sub">Outlier dynamics</p>
+                    <div class="pill-row">
+                      <span class="pill">Ceuta</span>
+                      <span class="pill">Melilla</span>
+                      <span class="pill">Navarra</span>
+                      <span class="pill">La Rioja</span>
+                      <span class="pill">Asturias</span>
+                      <span class="pill">Cantabria</span>
+                    </div>
+                  </div>
+
+                  <div class="cluster cluster--c3">
+                    <p class="cluster-title"><span class="cluster-dot cluster-dot--c3" aria-hidden="true"></span>Cluster 3</p>
+                    <div class="pill-row">
+                      <span class="pill">Madrid</span>
+                    </div>
+                  </div>
+
+                  <div class="cluster cluster--c4">
+                    <p class="cluster-title"><span class="cluster-dot cluster-dot--c4" aria-hidden="true"></span>Cluster 4</p>
+                    <div class="pill-row">
+                      <span class="pill">Andalucía</span>
+                    </div>
+                  </div>
+
+                  <div class="cluster cluster--c5">
+                    <p class="cluster-title"><span class="cluster-dot cluster-dot--c5" aria-hidden="true"></span>Cluster 5</p>
+                    <div class="pill-row">
+                      <span class="pill">Canarias</span>
+                    </div>
+                  </div>
+
+                  <div class="cluster cluster--c6">
+                    <p class="cluster-title"><span class="cluster-dot cluster-dot--c6" aria-hidden="true"></span>Cluster 6</p>
+                    <div class="pill-row">
+                      <span class="pill">Extremadura</span>
+                      <span class="pill">Balears</span>
+                      <span class="pill">Murcia</span>
+                      <span class="pill">Aragón</span>
+                    </div>
+                  </div>
+
+                  <div class="cluster cluster--c7">
+                    <p class="cluster-title"><span class="cluster-dot cluster-dot--c7" aria-hidden="true"></span>Cluster 7</p>
+                    <div class="pill-row">
+                      <span class="pill">Comunitat Valenciana</span>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="muted slide-foot">
+                  Executive takeaway: segmentation supports differentiated transition strategies; Cluster 0 stands out as a strong candidate,
+                  while Cluster 2 requires deeper local drivers analysis.
+                </p>
+              </article>
+
+              <article class="slide" role="listitem" aria-label="Slide: Cluster consumption differences">
+                <div class="slide-top">
+                  <p class="slide-kicker">Insights</p>
+                  <h4 class="slide-title">Consumption differences by cluster</h4>
+                  <p class="muted slide-sub">
+                    Clusters show materially different fuel dependencies. Some groups concentrate demand in a few products, while others are
+                    more balanced. Cluster 0 is a key case study due to its heavy diesel dependence.
+                  </p>
+                </div>
+
+                <div class="callout">
+                  <p class="callout-title">Cluster 0 (example to study)</p>
+                  <p class="muted callout-text">
+                    Highest Diesel A consumption (<strong>27,720,036 Tm</strong>) with meaningful Diesel B/C usage. Also shows notable Fuel Oil
+                    BIA (<strong>1,188,840 Tm</strong>) and a small but present biofuels footprint (Biodiesel <strong>28,354 Tm</strong>,
+                    Bioethanol <strong>137 Tm</strong>).
+                  </p>
+                  <div class="pill-row">
+                    <span class="pill">Diesel A: 27,720,036 Tm</span>
+                    <span class="pill">Fuel Oil BIA: 1,188,840 Tm</span>
+                    <span class="pill">Biodiesel: 28,354 Tm</span>
+                    <span class="pill">Bioethanol: 137 Tm</span>
+                  </div>
+                </div>
+
+                <details class="cluster-details">
+                  <summary class="cluster-summary">View other cluster profiles</summary>
+                  <ul class="cluster-list">
+                    <li>
+                      <strong>Cluster 1</strong>: High Diesel A (<strong>16,577,438 Tm</strong>) with lower Diesel B/C dependence vs Cluster 0;
+                      stands out for Jet Fuel (<strong>4,020,610 Tm</strong>).
+                    </li>
+                    <li>
+                      <strong>Cluster 2</strong>: Moderate Diesel A (<strong>6,837,276 Tm</strong>), limited biofuels; notable Fuel Oil BIA
+                      (<strong>645,937 Tm</strong>).
+                    </li>
+                    <li>
+                      <strong>Cluster 3</strong>: Very high Jet Fuel (<strong>8,555,405 Tm</strong>), suggesting strong airport linkage; other
+                      products relatively lower.
+                    </li>
+                    <li>
+                      <strong>Cluster 4</strong>: High Diesel A (<strong>16,149,540 Tm</strong>) plus strong “Other Diesels”
+                      (<strong>13,352,372 Tm</strong>), indicating a more diversified mix.
+                    </li>
+                    <li>
+                      <strong>Cluster 5</strong>: Highest Fuel Oil BIA (<strong>4,167,230 Tm</strong>) and Other Fuel Oils
+                      (<strong>5,078,744 Tm</strong>), consistent with industrial dependency.
+                    </li>
+                    <li>
+                      <strong>Cluster 6</strong>: Significant Diesel A (<strong>12,942,562 Tm</strong>) with a more balanced distribution across
+                      other products.
+                    </li>
+                    <li>
+                      <strong>Cluster 7</strong>: Notable Diesel A (<strong>9,400,070 Tm</strong>) with moderate “Other Diesels”
+                      (<strong>1,287,937 Tm</strong>), indicating substantial dependency.
+                    </li>
+                  </ul>
+                </details>
+
+                <p class="muted slide-foot">
+                  Executive takeaway: cluster profiles enable targeted transition strategies (e.g., diesel substitution, SAF readiness, or
+                  industrial fuel switching) instead of one-size-fits-all policies.
+                </p>
+              </article>
+
+              <article class="slide slide--wide" role="listitem" aria-label="Slide: SARIMAX forecasting model">
+                <div class="slide-top">
+                  <p class="slide-kicker">Forecasting</p>
+                  <h4 class="slide-title">SARIMAX model (executive overview)</h4>
+                  <p class="muted slide-sub">
+                    We optimized a seasonal SARIMAX model to forecast monthly consumption while reducing distortion from exceptional periods and
+                    improving robustness through time-series validation.
+                  </p>
+                </div>
+
+                <div class="sarimax-layout">
+                  <div class="sarimax-viz">
+                    <button type="button" class="viz-btn" (click)="openLightbox('SARIMAX: monthly series with event markers', sarimaxChart)">
+                      <ng-container *ngTemplateOutlet="sarimaxChart; context: { size: 'thumb' }"></ng-container>
+                    </button>
+
+                    <ng-template #sarimaxChart let-size="size">
+                      <svg
+                        [attr.class]="size === 'modal' ? 'lightbox-figure lightbox-figure--wide' : 'sarimax-svg'"
+                        viewBox="0 0 980 420"
+                        [attr.preserveAspectRatio]="size === 'modal' ? 'xMidYMid meet' : 'none'"
+                        aria-hidden="true"
+                      >
+                      <defs>
+                        <linearGradient [attr.id]="'sbg_' + size" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0" stop-color="rgba(4, 119, 191, 0.14)" />
+                          <stop offset="1" stop-color="rgba(4, 217, 217, 0.08)" />
+                        </linearGradient>
+                        <linearGradient [attr.id]="'sline_' + size" x1="0" y1="0" x2="1" y2="0">
+                          <stop offset="0" stop-color="#04c4d9" />
+                          <stop offset="1" stop-color="#04d9d9" />
+                        </linearGradient>
+                      </defs>
+
+                      <rect x="0" y="0" width="980" height="420" rx="16" [attr.fill]="'url(#sbg_' + size + ')'" />
+
+                      <g opacity="0.22" stroke="rgba(242, 242, 242, 0.7)" stroke-width="1">
+                        <path d="M64 56H948" />
+                        <path d="M64 120H948" />
+                        <path d="M64 184H948" />
+                        <path d="M64 248H948" />
+                        <path d="M64 56V356" />
+                        <path d="M210 56V356" />
+                        <path d="M356 56V356" />
+                        <path d="M502 56V356" />
+                        <path d="M648 56V356" />
+                        <path d="M794 56V356" />
+                        <path d="M948 56V356" />
+                      </g>
+
+                      <g opacity="0.35">
+                        <rect x="64" y="56" width="262" height="300" fill="rgba(235, 240, 86, 0.06)" />
+                        <text x="74" y="78" fill="rgba(242, 242, 242, 0.72)" font-size="12" font-weight="700">
+                          Filtered out: pre-Feb 2021 (COVID distortion)
+                        </text>
+                      </g>
+
+                      <g opacity="0.55">
+                        <rect x="468" y="56" width="74" height="300" fill="rgba(235, 240, 86, 0.05)" />
+                        <rect x="542" y="56" width="222" height="300" fill="rgba(235, 240, 86, 0.04)" />
+                        <text x="476" y="392" fill="rgba(242, 242, 242, 0.72)" font-size="12">Feb 2022</text>
+                        <text x="560" y="392" fill="rgba(242, 242, 242, 0.72)" font-size="12">Mar–Jun 2022</text>
+                      </g>
+
+                      <path
+                        d="M326 270
+                           L 356 312
+                           L 386 292
+                           L 416 256
+                           L 446 238
+                           L 476 220
+                           L 506 212
+                           L 536 206
+                           L 566 236
+                           L 596 248
+                           L 626 226
+                           L 656 214
+                           L 686 230
+                           L 716 218
+                           L 746 206
+                           L 776 220
+                           L 806 210
+                           L 836 200
+                           L 866 214
+                           L 896 190
+                           L 926 204"
+                        fill="none"
+                        [attr.stroke]="'url(#sline_' + size + ')'"
+                        stroke-width="4"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+
+                      <path
+                        d="M476 220 L 476 356"
+                        stroke="rgba(235, 240, 86, 0.9)"
+                        stroke-width="3"
+                        stroke-dasharray="6 7"
+                      />
+                      <path
+                        d="M542 248 L 542 356"
+                        stroke="rgba(235, 240, 86, 0.65)"
+                        stroke-width="3"
+                        stroke-dasharray="6 7"
+                      />
+                      <path
+                        d="M764 230 L 764 356"
+                        stroke="rgba(235, 240, 86, 0.45)"
+                        stroke-width="3"
+                        stroke-dasharray="6 7"
+                      />
+
+                      <g opacity="0.95">
+                        <circle cx="476" cy="220" r="5" fill="#ebf056" />
+                        <circle cx="566" cy="236" r="5" fill="#ebf056" opacity="0.85" />
+                        <circle cx="596" cy="248" r="5" fill="#ebf056" opacity="0.85" />
+                        <circle cx="896" cy="190" r="5" fill="#ebf056" opacity="0.85" />
+                      </g>
+
+                      <text x="64" y="40" fill="rgba(242, 242, 242, 0.9)" font-size="14" font-weight="800">
+                        Monthly consumption series (training window)
+                      </text>
+                      <text x="64" y="374" fill="rgba(242, 242, 242, 0.72)" font-size="12">
+                        Highlighted events: Feb 2022 (Ukraine war shock), Mar–Jun 2022 (price surge), 2023 (continued volatility)
+                      </text>
+
+                      <g fill="rgba(242, 242, 242, 0.72)" font-size="12" font-weight="700">
+                        <text x="64" y="410">Feb 2021</text>
+                        <text x="300" y="410">2021</text>
+                        <text x="520" y="410">2022</text>
+                        <text x="730" y="410">2023</text>
+                        <text x="900" y="410">2024</text>
+                      </g>
+                    </svg>
+                    </ng-template>
+                  </div>
+
+                </div>
+
+                <div class="sarimax-notes">
+                  <div class="metric-grid" aria-label="Model metrics">
+                    <div class="metric">
+                      <p class="metric-label">Model</p>
+                      <p class="metric-value">(2, 2, 3) × (1, 1, 1, 12)</p>
+                    </div>
+                    <div class="metric">
+                      <p class="metric-label">AIC</p>
+                      <p class="metric-value">-18.62</p>
+                    </div>
+                    <div class="metric">
+                      <p class="metric-label">Test RMSE</p>
+                      <p class="metric-value">1,278,357.94</p>
+                    </div>
+                    <div class="metric">
+                      <p class="metric-label">CV RMSE (5 folds)</p>
+                      <p class="metric-value">1,080,858.12</p>
+                    </div>
+                  </div>
+
+                  <p class="muted slide-foot">
+                    Preparation choices were designed to increase decision-grade stability: we excluded pre-Feb 2021 to remove COVID-driven
+                    distortions, aggregated monthly totals, standardized scale for model sensitivity, and selected parameters via grid search
+                    (minimizing AIC) validated with TimeSeriesSplit.
+                  </p>
+
+                  <div class="pill-row">
+                    <span class="pill">Filtered: pre-Feb 2021</span>
+                    <span class="pill">StandardScaler normalization</span>
+                    <span class="pill">Grid search (AIC)</span>
+                    <span class="pill">TimeSeriesSplit (5)</span>
+                  </div>
+
+                  <p class="muted slide-foot">
+                    Next step: add exogenous drivers (temperature, fuel prices, policy signals) to reduce error during volatility regimes.
+                  </p>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div class="exec-block">
+            <p class="label">Conclusions</p>
+
+            <div class="conclusions-grid" aria-label="Project conclusions">
+              <div class="exec-card">
+                <p class="conclusion-title">K-Means segmentation enables targeted transition strategies</p>
+                <p class="muted conclusion-text">
+                  Clustering petroleum consumption by autonomous community proved effective to surface differentiated regional patterns. High
+                  similarity groups can benefit from joint policies and shared transition roadmaps.
+                </p>
+                <ul class="exec-bullets">
+                  <li>
+                    <strong>Cluster 0</strong> highlights actionable opportunities: reduce Diesel A dependency via biofuels, improve efficiency in
+                    heating and transport, and accelerate renewable infrastructure in rural areas.
+                  </li>
+                  <li>
+                    SARIMAX forecasting complements clustering by testing “what-if” scenarios and estimating demand impact under transition
+                    actions.
+                  </li>
+                  <li>
+                    <strong>Cluster 2</strong> shows inconsistent correlations (Ceuta/Melilla), signaling the need for deeper local-context
+                    analysis before applying broad policies.
+                  </li>
+                </ul>
+              </div>
+
+              <div class="exec-card">
+                <p class="conclusion-title">SARIMAX limitations: exogenous variables are critical</p>
+                <p class="muted conclusion-text">
+                  SARIMAX captured seasonality well, but missing exogenous drivers limited predictive power—especially for highly
+                  temperature-dependent fuels such as Diesel C.
+                </p>
+                <ul class="exec-bullets">
+                  <li>
+                    Without variables like <strong>temperature</strong>, <strong>fuel prices</strong>, and <strong>policy signals</strong>, the model
+                    relies on historical patterns and cannot fully explain shocks and structural changes.
+                  </li>
+                  <li>
+                    This reduces accuracy and, more importantly, constrains strategic planning where policy evaluation requires contextual data.
+                  </li>
+                  <li>
+                    A cluster-aware SARIMAX with relevant exogenous inputs would better estimate transition impacts per segment.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="exec-block">
+            <p class="label">Future work</p>
+            <div class="exec-card">
+              <ul class="future-list">
+                <li>Deep-dive analysis of specific clusters, especially Cluster 2, to capture unique local dynamics.</li>
+                <li>Integrate exogenous variables into SARIMAX (temperature, fuel prices, energy policy) to improve realism and accuracy.</li>
+                <li>Explore complementary models (RNNs, hybrid approaches) for richer scenario simulations under volatility regimes.</li>
+                <li>Evaluate energy-policy impact by simulating scenarios (transport electrification incentives, fossil restrictions) per cluster.</li>
+                <li>Extend the study to Europe to benchmark strategies and identify collaboration opportunities for decarbonization.</li>
+                <li>Incorporate new data sources (IoT sensors, satellite signals, market reports) to improve responsiveness and coverage.</li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         <div class="featured-aside" aria-label="Project focus">
+
           <div class="aside-box">
             <p class="label">Why this matters</p>
             <p class="muted aside-text">
-              Forecasting + clustering can turn raw consumption logs into decisions: seasonality understanding, anomaly detection,
-              and better planning. I focus on clean pipelines and explainable insights.
+              In the context of energy transition and public policy, understanding regional fuel demand helps prioritize interventions.
+              Clustering highlights communities with similar behavior, while forecasting estimates how demand could evolve through 2026.
             </p>
           </div>
 
           <div class="aside-box">
             <p class="label">What you can expect</p>
             <ul class="small-bullets">
-              <li>Readable notebooks and repeatable pipelines</li>
-              <li>Model evaluation with practical metrics</li>
-              <li>Insights surfaced for non-technical stakeholders</li>
+              <li>Clear regional segments, including a transition-ready cluster (e.g., Castilla-La Mancha, Galicia)</li>
+              <li>Acknowledged edge cases with different dynamics (Cluster 2: Ceuta and Melilla)</li>
+              <li>SARIMAX forecasting with seasonality and a roadmap for adding exogenous variables</li>
             </ul>
           </div>
         </div>
@@ -71,5 +1308,20 @@
         </article>
       }
     </div>
+
+    <app-lightbox
+      [open]="lightboxOpen"
+      [title]="lightboxTitle"
+      [variant]="lightboxVariant"
+      [disableContextMenu]="lightboxDisableContextMenu"
+      [noSelect]="lightboxNoSelect"
+      (closed)="closeLightbox()"
+    >
+      <ng-container
+        *ngIf="lightboxOpen && lightboxTemplate"
+        [ngTemplateOutlet]="lightboxTemplate"
+        [ngTemplateOutletContext]="{ size: 'modal' }"
+      ></ng-container>
+    </app-lightbox>
   </div>
 </section>

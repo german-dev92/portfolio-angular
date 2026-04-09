@@ -1,16 +1,130 @@
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 
+.skill-card {
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.skill-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background:
+    radial-gradient(520px 220px at 15% 10%, var(--skill-soft), transparent 55%),
+    radial-gradient(520px 220px at 90% 0%, rgba(242, 242, 242, 0.04), transparent 55%);
+  pointer-events: none;
+}
+
+.skill-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, var(--skill-soft), transparent) border-box;
+  -webkit-mask:
+    linear-gradient(#000 0 0) padding-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.skill-card:hover {
+  transform: translateY(-2px) scale(1.01);
+  border-color: rgba(242, 242, 242, 0.18);
+  box-shadow: 0 24px 54px rgba(1, 11, 64, 0.62);
+}
+
+.skill-card:hover::before {
+  filter: saturate(1.06);
+}
+
+.skill-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
 .group-title {
-  margin: 0 0 12px;
+  margin: 0;
   font-size: 16px;
   letter-spacing: -0.02em;
 }
 
+.group-meta {
+  margin: 0;
+  font-size: 13px;
+}
+
+.skill-card .pill {
+  border-color: rgba(242, 242, 242, 0.14);
+  background: rgba(1, 11, 64, 0.18);
+  color: rgba(242, 242, 242, 0.86);
+  transition:
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.skill-card:hover .pill {
+  border-color: var(--skill-border);
+  background: var(--skill-chip);
+}
+
+.skill-card[data-accent='indigo'] {
+  --skill-accent: #312bff;
+  --skill-soft: rgba(49, 43, 255, 0.16);
+  --skill-border: rgba(49, 43, 255, 0.55);
+  --skill-chip: rgba(49, 43, 255, 0.12);
+}
+
+.skill-card[data-accent='orange'] {
+  --skill-accent: #ff7f38;
+  --skill-soft: rgba(255, 127, 56, 0.16);
+  --skill-border: rgba(255, 127, 56, 0.55);
+  --skill-chip: rgba(255, 127, 56, 0.12);
+}
+
+.skill-card[data-accent='blue'] {
+  --skill-accent: #1f8fff;
+  --skill-soft: rgba(31, 143, 255, 0.16);
+  --skill-border: rgba(31, 143, 255, 0.55);
+  --skill-chip: rgba(31, 143, 255, 0.12);
+}
+
+.skill-card[data-accent='yellow'] {
+  --skill-accent: #ffd405;
+  --skill-soft: rgba(255, 212, 5, 0.14);
+  --skill-border: rgba(255, 212, 5, 0.55);
+  --skill-chip: rgba(255, 212, 5, 0.12);
+}
+
+.skill-card[data-accent='aqua'] {
+  --skill-accent: #12fff8;
+  --skill-soft: rgba(18, 255, 248, 0.14);
+  --skill-border: rgba(18, 255, 248, 0.55);
+  --skill-chip: rgba(18, 255, 248, 0.12);
+}
+
 @media (max-width: 980px) {
+  .skills-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
   .skills-grid {
     grid-template-columns: 1fr;
   }
