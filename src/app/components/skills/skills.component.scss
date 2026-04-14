@@ -32,6 +32,10 @@
   border-radius: var(--radius);
   border: 1px solid transparent;
   background: linear-gradient(135deg, var(--skill-soft), transparent) border-box;
+  mask:
+    linear-gradient(#000 0 0) padding-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
   -webkit-mask:
     linear-gradient(#000 0 0) padding-box,
     linear-gradient(#000 0 0);

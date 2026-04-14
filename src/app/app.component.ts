@@ -1,19 +1,25 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AboutComponent } from './components/about/about.component';
-import { ContactComponent } from './components/contact/contact.component';
-import { HeroComponent } from './components/hero/hero.component';
-import { ProjectsComponent } from './components/projects/projects.component';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
 import { SiteNavComponent } from './components/site-nav/site-nav.component';
-import { SkillsComponent } from './components/skills/skills.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [SiteNavComponent, HeroComponent, ProjectsComponent, SkillsComponent, AboutComponent, ContactComponent],
+  imports: [SiteNavComponent, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
   protected readonly year = new Date().getFullYear();
+
+  public constructor(router: Router) {
+    router.events.pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd)).subscribe((e) => {
+      const url = e.urlAfterRedirects.split('?')[0].split('#')[0];
+      const isHome = url === '/' || url === '';
+      document.documentElement.classList.toggle('snap-home', isHome);
+      document.body.classList.toggle('snap-home', isHome);
+    });
+  }
 }

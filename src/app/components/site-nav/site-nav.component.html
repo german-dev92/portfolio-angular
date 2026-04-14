@@ -2,16 +2,24 @@
   <a class="skip" href="#content">Skip to content</a>
 
   <div class="container topbar-inner">
-    <a class="brand" href="#top" aria-label="Go to top">
+    <a class="brand" href="#top" aria-label="Go to top" [class.is-active]="activeSection === 'hero'" [attr.aria-current]="activeSection === 'hero' ? 'page' : null">
       <span class="brand-dot" aria-hidden="true"></span>
-      <span class="brand-text">German Velasquez</span>
+      <span class="brand-text">German’s Portfolio</span>
     </a>
 
     <nav class="nav" aria-label="Primary">
-      <a class="nav-link" href="#projects">Projects</a>
-      <a class="nav-link" href="#skills">Skills</a>
-      <a class="nav-link" href="#about">About</a>
-      <a class="nav-link nav-link--cta" href="#contact">Contact</a>
+      <a class="nav-link" href="#projects" [class.is-active]="activeSection === 'projects'" [attr.aria-current]="activeSection === 'projects' ? 'page' : null">
+        Projects
+      </a>
+      <a class="nav-link" href="#skills" [class.is-active]="activeSection === 'skills'" [attr.aria-current]="activeSection === 'skills' ? 'page' : null">
+        Skills
+      </a>
+      <a class="nav-link" href="#about" [class.is-active]="activeSection === 'about'" [attr.aria-current]="activeSection === 'about' ? 'page' : null">
+        About
+      </a>
+      <a class="nav-link nav-link--cta" href="#contact" [class.is-active]="activeSection === 'contact'" [attr.aria-current]="activeSection === 'contact' ? 'page' : null">
+        Contact
+      </a>
     </nav>
   </div>
 </header>

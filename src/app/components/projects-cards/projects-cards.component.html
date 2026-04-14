@@ -1,0 +1,76 @@
+<section class="section" id="projects">
+  <div class="container">
+    <div class="section-title">
+      <h2>Projects</h2>
+      <p>Clear, outcome-oriented work. Click on any card to view the detailed case study.</p>
+    </div>
+
+    <div class="projects-shelf" aria-label="Projects">
+      <div class="shelf-label card" aria-hidden="true">
+        <div class="shelf-label-inner">
+          <span>CASE</span>
+          <span>STUDY</span>
+        </div>
+      </div>
+
+      <div class="projects-grid" role="list" aria-label="Project cards">
+        <a class="card project project-card" routerLink="/projects/tfm" role="listitem" data-accent="turquoise">
+          <div class="card-inner project-card-inner">
+            <div class="project-thumb" aria-hidden="true"></div>
+            <h3 class="project-title">{{ featured.title }}</h3>
+            <p class="project-desc muted">{{ featured.description }}</p>
+            <div class="pill-row">
+              @for (tech of featured.technologies; track tech) {
+                <span class="pill">{{ tech }}</span>
+              }
+            </div>
+
+            <div class="project-card-foot" aria-hidden="true">
+              <span class="project-cta">Open</span>
+              <span class="project-cta-icon">→</span>
+            </div>
+          </div>
+        </a>
+
+        @for (p of others; track p.id) {
+          @if (!p.comingSoon) {
+            <a class="card project project-card" role="listitem" [attr.data-accent]="getProjectAccent(p)" [routerLink]="getProjectRoute(p)">
+              <div class="card-inner project-card-inner">
+                <div class="project-thumb" aria-hidden="true"></div>
+                <h3 class="project-title">{{ p.title }}</h3>
+                <p class="project-desc muted">{{ p.description }}</p>
+                <div class="pill-row">
+                  @for (tech of p.technologies; track tech) {
+                    <span class="pill">{{ tech }}</span>
+                  }
+                </div>
+
+                <div class="project-card-foot" aria-hidden="true">
+                  <span class="project-cta">Open</span>
+                  <span class="project-cta-icon">→</span>
+                </div>
+              </div>
+            </a>
+          } @else {
+            <div class="card project project-card project-card--disabled" role="listitem" [attr.data-accent]="getProjectAccent(p)">
+              <div class="card-inner project-card-inner">
+                <div class="project-thumb" aria-hidden="true"></div>
+                <h3 class="project-title">{{ p.title }}</h3>
+                <p class="project-desc muted">{{ p.description }}</p>
+                <div class="pill-row">
+                  @for (tech of p.technologies; track tech) {
+                    <span class="pill">{{ tech }}</span>
+                  }
+                </div>
+
+                <div class="project-card-foot" aria-hidden="true">
+                  <span class="project-cta">Próximamente</span>
+                </div>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</section>

@@ -8,6 +8,9 @@ export interface Project {
   description: string;
   highlights?: string[];
   technologies: string[];
+  route?: string;
+  accent?: 'turquoise' | 'cyan' | 'primary';
+  comingSoon?: boolean;
 }
 
 export interface SkillGroup {

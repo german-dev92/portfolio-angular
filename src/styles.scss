@@ -1,16 +1,17 @@
 :root {
-  --bg: #010b40;
-  --text: #f2f2f2;
-  --muted: rgba(242, 242, 242, 0.72);
-  --border: rgba(242, 242, 242, 0.14);
-  --border-strong: rgba(242, 242, 242, 0.22);
-  --surface: rgba(242, 242, 242, 0.05);
-  --surface-2: rgba(242, 242, 242, 0.08);
-  --primary: #0477bf;
-  --cyan: #04c4d9;
-  --turquoise: #04d9d9;
-  --highlight: #ebf056;
-  --shadow: 0 14px 34px rgba(1, 11, 64, 0.55);
+  --bg: #041f22;
+  --text: #f1ecdd;
+  --muted: rgba(241, 236, 221, 0.72);
+  --border: rgba(241, 236, 221, 0.14);
+  --border-strong: rgba(241, 236, 221, 0.22);
+  --surface: rgba(241, 236, 221, 0.06);
+  --surface-2: rgba(241, 236, 221, 0.1);
+  --primary: #027f8a;
+  --secondary: #00898d;
+  --accent: #00b2ff;
+  --warm: #f24b28;
+  --warm-2: #f24128;
+  --shadow: 0 14px 34px rgba(0, 0, 0, 0.38);
   --radius: 14px;
   --container: 1120px;
 }
@@ -34,10 +35,7 @@ html {
 body {
   margin: 0;
   color: var(--text);
-  background: radial-gradient(1000px 680px at 20% 0%, rgba(4, 196, 217, 0.12), transparent 62%),
-    radial-gradient(980px 640px at 90% 30%, rgba(4, 119, 191, 0.18), transparent 60%),
-    radial-gradient(860px 520px at 55% 110%, rgba(4, 217, 217, 0.1), transparent 55%),
-    var(--bg);
+  background: var(--bg);
   font-family:
     ui-sans-serif,
     system-ui,
@@ -52,7 +50,7 @@ body {
 }
 
 a {
-  color: var(--turquoise);
+  color: var(--accent);
   text-decoration: none;
 }
 
@@ -61,7 +59,7 @@ a:hover {
 }
 
 :focus-visible {
-  outline: 3px solid rgba(235, 240, 86, 0.75);
+  outline: 3px solid rgba(0, 178, 255, 0.75);
   outline-offset: 3px;
 }
 
@@ -70,9 +68,9 @@ a:hover {
 }
 
 main > .section:nth-of-type(even) {
-  background: rgba(242, 242, 242, 0.03);
-  border-top: 1px solid rgba(242, 242, 242, 0.06);
-  border-bottom: 1px solid rgba(242, 242, 242, 0.06);
+  background: rgba(241, 236, 221, 0.03);
+  border-top: 1px solid rgba(241, 236, 221, 0.06);
+  border-bottom: 1px solid rgba(241, 236, 221, 0.06);
 }
 
 .container {
@@ -111,7 +109,7 @@ main > .section:nth-of-type(even) {
 }
 
 .card {
-  background: linear-gradient(180deg, rgba(242, 242, 242, 0.08), rgba(242, 242, 242, 0.03));
+  background: rgba(241, 236, 221, 0.06);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -135,7 +133,7 @@ main > .section:nth-of-type(even) {
   border: 1px solid var(--border);
   border-radius: 999px;
   color: var(--muted);
-  background: rgba(242, 242, 242, 0.03);
+  background: rgba(241, 236, 221, 0.04);
   font-size: 13px;
 }
 
@@ -149,34 +147,67 @@ main > .section:nth-of-type(even) {
   padding: 10px 14px;
   font-weight: 650;
   letter-spacing: -0.01em;
-  background: rgba(242, 242, 242, 0.03);
+  background: rgba(241, 236, 221, 0.05);
   color: var(--text);
   transition:
-    transform 120ms ease,
-    border-color 120ms ease,
-    background 120ms ease;
+    transform 220ms ease,
+    border-color 220ms ease,
+    background 220ms ease,
+    box-shadow 220ms ease;
 }
 
 .btn:hover {
   transform: translateY(-1px);
-  border-color: rgba(4, 217, 217, 0.55);
-  background: rgba(4, 217, 217, 0.12);
+  border-color: rgba(0, 178, 255, 0.55);
+  background: rgba(0, 178, 255, 0.12);
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.28);
   text-decoration: none;
 }
 
 .btn--primary {
-  border-color: rgba(4, 196, 217, 0.65);
-  background: linear-gradient(135deg, rgba(4, 119, 191, 0.95), rgba(4, 196, 217, 0.95));
-  color: #010b40;
+  border-color: rgba(2, 127, 138, 0.8);
+  background: var(--primary);
+  color: var(--text);
 }
 
 .btn--primary:hover {
-  border-color: rgba(235, 240, 86, 0.85);
-  background: linear-gradient(135deg, rgba(4, 119, 191, 1), rgba(235, 240, 86, 0.92));
+  border-color: rgba(0, 178, 255, 0.8);
+  background: var(--secondary);
 }
 
 .muted {
   color: var(--muted);
+}
+
+body.snap-home {
+  overflow: hidden;
+}
+
+body.snap-home main {
+  height: calc(100svh - 78px);
+  overflow: hidden;
+}
+
+body.snap-home .footer {
+  display: none;
+}
+
+body.snap-home .section {
+  padding: 56px 0;
+}
+
+body.snap-home .section--tight {
+  padding: 56px 0;
+}
+
+body.snap-home app-home {
+  display: block;
+  height: 100%;
+}
+
+body.snap-home app-home .view {
+  min-height: 100%;
+  height: 100%;
 }
 
 @media (max-width: 720px) {

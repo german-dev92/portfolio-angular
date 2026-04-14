@@ -1,7 +1,7 @@
 import { Profile, Project, SkillGroup } from './models';
 
 export const PROFILE: Profile = {
-  name: 'German Velasquez Zelaya',
+  name: 'German Velasquez',
   role: 'Full Stack Developer | Data & AI-Oriented Developer',
   location: 'Madrid, Spain',
   summary:
@@ -41,6 +41,33 @@ export const PROJECTS: Project[] = [
     description:
       'Web application that processes review data and presents clear, recruiter-friendly insights through a simple frontend visualization layer.',
     technologies: ['Angular', 'Node.js', 'Python', 'Data Processing', 'Visualization'],
+  },
+  {
+    id: 'task-manager',
+    kind: 'project',
+    title: 'Task Management App',
+    description: 'A focused productivity app concept with clean UI patterns, analytics-friendly data structures, and scalable routing.',
+    technologies: ['Angular', 'TypeScript', 'RxJS', 'UI/UX'],
+    accent: 'cyan',
+    comingSoon: true,
+  },
+  {
+    id: 'weather-dashboard',
+    kind: 'project',
+    title: 'Weather Dashboard',
+    description: 'Dashboard-style concept for real-time data, charts, and a responsive layout optimized for quick scanning.',
+    technologies: ['TypeScript', 'API Integration', 'Charts', 'Responsive UI'],
+    accent: 'turquoise',
+    comingSoon: true,
+  },
+  {
+    id: 'ecommerce-platform',
+    kind: 'project',
+    title: 'Modern E-commerce Platform',
+    description: 'Storefront concept with product browsing, search/filtering, and a component-driven design system.',
+    technologies: ['Frontend Architecture', 'Design System', 'Performance'],
+    accent: 'primary',
+    comingSoon: true,
   },
 ];
 
